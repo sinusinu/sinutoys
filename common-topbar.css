@@ -1,0 +1,40 @@
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+@media (prefers-color-scheme: dark) {
+    :root {
+        --topbar-bg: #282836;
+        --topbar-fg: #e6e6e6;
+        --topbar-text-shadow: #141414;
+    }
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --topbar-bg: #d0d0e6;
+        --topbar-fg: #141414;
+        --topbar-text-shadow: #b0b0bf;
+    }
+}
+:root {
+    --topbar-padding: 16px;
+}
+.stb-topbar {
+    flex-shrink: 0;
+    padding: var(--topbar-padding);
+    font-family: 'NanumSquare', sans-serif;
+    font-weight: 600;
+    text-shadow: 2px 2px 2px var(--topbar-text-shadow);
+    background: linear-gradient(180deg, var(--topbar-bg), transparent);
+    user-select: none;
+}
+.stb-topbar-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: var(--topbar-padding);
+}
+.stb-topbar-back a {
+    text-decoration: none;
+    color: var(--topbar-fg);
+}
+.stb-topbar-title {
+    text-align: center;
+}

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>매일매일 계산 :: 시누의 장난감 상자</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../common-topbar.css">
+        <style>
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #1d1d20;
+                    --fg: #f0f0f0;
+                    --fg-far: #606060;
+                    --fg-farfar: #303030;
+                    --btn-hover-bg: #505050;
+                    --ding: #408040;
+                    --beep: #804040;
+                }
+            }
+            @media (prefers-color-scheme: light) {
+                :root {
+                    --bg: #f0f0f0;
+                    --fg: #101010;
+                    --fg-far: #a0a0a0;
+                    --fg-farfar: #c0c0c0;
+                    --btn-hover-bg: #d0d0d0;
+                    --ding: #80FF80;
+                    --beep: #FF8080;
+                }
+            }
+            body, html {
+                background-color: var(--bg);
+                color: var(--fg);
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+            .container {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            .screen-container {
+                position: relative;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Noto Serif KR', serif;
+                font-optical-sizing: auto;
+                font-weight: 600;
+                user-select: none;
+            }
+            .menu-title {
+                font-size: 56px;
+            }
+            .menu-subtitle {
+                font-size: 40px;
+            }
+            .menu-subsubtitle {
+                font-size: 20px;
+            }
+            .menu-disclaimer {
+                padding: 0px 16px;
+                font-size: 13px;
+                word-break: keep-all;
+            }
+            .menu-spacer {
+                width: 1px;
+                height: 40px;
+            }
+            .menu-semispacer {
+                width: 1px;
+                height: 24px;
+            }
+            .menu-weespacer {
+                width: 1px;
+                height: 12px;
+            }
+            .menu-bigbutton {
+                width: 240px;
+                height: 64px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border: 1px solid var(--btn-hover-bg);
+                font-size: 22px;
+                cursor: pointer;
+                padding-bottom: 4px;
+            }
+            .menu-bigbutton-caution {
+                border: 1px solid var(--beep);
+            }
+            .menu-bigbutton:hover {
+                animation: bigbutton-hover-anim 0.03s linear forwards;
+            }
+            @keyframes bigbutton-hover-anim {
+                0% {
+                    background-color: var(--bg);
+                }
+                100% {
+                    background-color: var(--btn-hover-bg);
+                }
+            }
+            .menu-bigbutton-caution:hover {
+                animation: bigbutton-caution-hover-anim 0.03s linear forwards;
+            }
+            @keyframes bigbutton-caution-hover-anim {
+                0% {
+                    background-color: var(--bg);
+                }
+                100% {
+                    background-color: var(--beep);
+                }
+            }
+            .menu-bigbutton-subtitle {
+                line-height: 22px;
+                font-size: 14px;
+            }
+            .menu-linky-text {
+                cursor: pointer;
+                text-decoration: 1px underline var(--fg);
+            }
+            .menu-check {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                font-size: 20px;
+                cursor: pointer;
+            }
+            .menu-btnspacer {
+                width: 1px;
+                height: 20px;
+            }
+            .screen {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            .checkbox-rpad {
+                padding-right: 4px;
+            }
+            .hidden {
+                visibility: hidden;
+            }
+            .collapse {
+                visibility: hidden;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .menu-streak {
+                font-size: 22px;
+            }
+            table {
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 4px 12px;
+            }
+            .game-problems {
+                font-size: 60px;
+                line-height: 64px;
+            }
+            .game-problem {
+                padding: 10px 24px 16px 24px;
+            }
+            .game-problem-current {
+                background-color: var(--btn-hover-bg);
+            }
+            .game-problem-far {
+                color: var(--fg-far);
+            }
+            .game-problem-farfar {
+                color: var(--fg-farfar);
+            }
+            .game-spacer {
+                width: 1px;
+                height: 100px;
+            }
+            .game-inputbox {
+                background-color: var(--fg-farfar);
+                font-size: 48px;
+                padding: 0px 12px 2px 12px;
+                margin-bottom: 12px;
+                min-width: 100px;
+            }
+            .game-keys-container {
+                font-size: 32px;
+                padding-bottom: 36px;
+                display: flex;
+                flex-direction: column;
+            }
+            .game-keys-row {
+                display: flex;
+                flex-direction: row;
+            }
+            .game-key {
+                width: 100px;
+                height: 60px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border: 1px solid var(--btn-hover-bg);
+                margin: 4px;
+                cursor: pointer;
+            }
+            .game-key-text {
+                font-size: 24px;
+            }
+            .game-key:hover {
+                background-color: var(--btn-hover-bg);
+            }
+            .anim-problem-slide {
+                animation: problemSlide 0.2s cubic-bezier(.15,.58,.36,.91) forwards;
+            }
+            @keyframes problemSlide {
+                0% {
+                    translate: 0px -90px;
+                }
+                100% {
+                    translate: 0px 0px;
+                }
+            }
+            .anim-ding {
+                animation: ding 1s cubic-bezier(.15,.58,.36,.91) forwards;
+            }
+            .anim-beep {
+                animation: beep 1s cubic-bezier(.15,.58,.36,.91) forwards;
+            }
+            @keyframes ding {
+                0% {
+                    background-color: var(--ding);
+                }
+                100% {
+                    background-color: var(--fg-farfar);
+                }
+            }
+            @keyframes beep {
+                0% {
+                    background-color: var(--beep);
+                }
+                100% {
+                    background-color: var(--fg-farfar);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="stb-topbar">
+                <div class="stb-topbar-back"><a href="../">◀ 돌아가기</a></div>
+                <div class="stb-topbar-title">매일매일 계산</div>
+            </div>
+            <div class="screen-container">
+                <div id="screen-menu" class="screen">
+                    <div class="menu-title">매일매일 계산</div>
+                    <div class="menu-semispacer"></div>
+                    <div class="menu-streak">
+                        <table>
+                            <tr>
+                                <th id="streak-date-1">-</th>
+                                <th id="streak-date-2">-</th>
+                                <th id="streak-date-3">-</th>
+                                <th id="streak-date-4">-</th>
+                                <th id="streak-date-5">-</th>
+                            </tr>
+                            <tr>
+                                <td id="streak-stamp-1">-</td>
+                                <td id="streak-stamp-2">-</td>
+                                <td id="streak-stamp-3">-</td>
+                                <td id="streak-stamp-4">-</td>
+                                <td id="streak-stamp-5">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="menu-weespacer"></div>
+                    <div id="more-records" class="menu-subsubtitle">불러오는 중</div>
+                    <div class="menu-semispacer"></div>
+                    <div id="start-practice" class="menu-bigbutton" tabindex="1">10문제 연습<br><span class="menu-bigbutton-subtitle">기록이 저장되지 않습니다</span></div>
+                    <div class="menu-btnspacer"></div>
+                    <div id="start-game" class="menu-bigbutton" tabindex="1">30문제 도전</div>
+                    <div class="menu-btnspacer"></div>
+                    <div id="enable-touch-kbd" class="menu-check" tabindex="1"><div id="check-enable-touch-kbd" class="checkbox-rpad">⬜</div>터치 키보드 표시</div>
+                    <div class="menu-btnspacer"></div>
+                    <div id="info-keyboard-controls" class="menu-subsubtitle">《 키보드 조작 방법 》<br>숫자 키 - 입력<br>Enter - 확인<br>Bksp/Del - 지우기</div>
+                    <div class="menu-btnspacer"></div>
+                    <div class="menu-disclaimer">《 쿠키 알림 》<br>매일매일 계산은 기록 저장에 쿠키를 사용합니다.<br>매일매일 계산을 플레이하면 쿠키 사용에 동의한 것으로 간주됩니다.</div>
+                    <div class="menu-btnspacer"></div>
+                    <div id="reset-records" class="menu-disclaimer menu-linky-text" tabindex="1">초기화</div>
+                </div>
+                <div id="screen-countdown" class="screen hidden">
+                    <div id="d-countdown" class="menu-title">3</div>
+                </div>
+                <div id="screen-game" class="screen hidden">
+                    <div class="game-problems">
+                        <div class="game-problem game-problem-farfar"><div id="game-problem-farfar" class="game-problem-content">9 ＋ 3 =</div></div>
+                        <div class="game-problem game-problem-far"><div id="game-problem-far" class="game-problem-content">13 － 2 =</div></div>
+                        <div class="game-problem game-problem-current"><div id="game-problem-current" class="game-problem-content">32 × 2 =</div></div>
+                    </div>
+                    <div class="game-spacer"></div>
+                    <div id="game-inputbox" class="game-inputbox">&nbsp;</div>
+                    <div id="game-keys-container" class="game-keys-container">
+                        <div class="game-keys-row">
+                            <div class="game-key">1</div>
+                            <div class="game-key">2</div>
+                            <div class="game-key">3</div>
+                        </div>
+                        <div class="game-keys-row">
+                            <div class="game-key">4</div>
+                            <div class="game-key">5</div>
+                            <div class="game-key">6</div>
+                        </div>
+                        <div class="game-keys-row">
+                            <div class="game-key">7</div>
+                            <div class="game-key">8</div>
+                            <div class="game-key">9</div>
+                        </div>
+                        <div class="game-keys-row">
+                            <div class="game-key game-key-text">지우기</div>
+                            <div class="game-key">0</div>
+                            <div class="game-key game-key-text">확인</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="screen-result" class="screen hidden">
+                    <div class="menu-title">🏁 완료!</div>
+                    <div class="menu-btnspacer"></div>
+                    <div id="result-result-is" class="menu-subtitle">오늘의 기록:</div>
+                    <div id="result-elapsed" class="menu-title">69초</div>
+                    <div class="menu-btnspacer"></div>
+                    <div id="return-to-title" class="menu-bigbutton" tabindex="1">돌아가기</div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const today = new Date();
+
+            let toggleHideTouchKbd = document.getElementById("enable-touch-kbd");
+            let checkEnableTouchKbd = document.getElementById("check-enable-touch-kbd");
+            let streakDates = [
+                document.getElementById("streak-date-1"),
+                document.getElementById("streak-date-2"),
+                document.getElementById("streak-date-3"),
+                document.getElementById("streak-date-4"),
+                document.getElementById("streak-date-5"),
+            ];
+            let streakStamps = [
+                document.getElementById("streak-stamp-1"),
+                document.getElementById("streak-stamp-2"),
+                document.getElementById("streak-stamp-3"),
+                document.getElementById("streak-stamp-4"),
+                document.getElementById("streak-stamp-5"),
+            ];
+            let btnStartPractice = document.getElementById("start-practice");
+            let btnStartGame = document.getElementById("start-game");
+            let screenMenu = document.getElementById("screen-menu");
+            let screenCountdown = document.getElementById("screen-countdown");
+            let screenGame = document.getElementById("screen-game");
+            let screenResult = document.getElementById("screen-result");
+            let dCountdown = document.getElementById("d-countdown");
+            let problemContents = [
+                document.getElementById("game-problem-current"),
+                document.getElementById("game-problem-far"),
+                document.getElementById("game-problem-farfar"),
+            ];
+            let inputBox = document.getElementById("game-inputbox");
+            let keypad = document.getElementById("game-keys-container");
+            let keys = document.getElementsByClassName("game-key");
+            let infoKeyboardControls = document.getElementById("info-keyboard-controls");
+            let resultResultIs = document.getElementById("result-result-is");
+            let resultElapsed = document.getElementById("result-elapsed");
+            let btnReturnToTitle = document.getElementById("return-to-title");
+            let moreRecords = document.getElementById("more-records");
+            let btnResetRecords = document.getElementById("reset-records");
+
+            let records = {};
+            let streak = 0;
+            let hiScore = null;
+            let hideTouchKeyboard = false;
+
+            function loadStorage() {
+                hideTouchKeyboard = (window.localStorage.getItem("hide-touch-kbd") == "true");
+                checkEnableTouchKbd.innerText = hideTouchKeyboard ? "⬜" : "☑️";
+                if (hideTouchKeyboard) {
+                    keypad.classList.add("collapse");
+                    infoKeyboardControls.classList.remove("collapse");
+                } else {
+                    keypad.classList.remove("collapse");
+                    infoKeyboardControls.classList.add("collapse");
+                }
+                records = JSON.parse(window.localStorage.getItem("records"));
+                if (records == null) records = {};
+                streak = window.localStorage.getItem("streak");
+                if (streak == null) streak = 0;
+                hiScore = window.localStorage.getItem("hi-score");
+                if (hiScore != null) hiScore = parseFloat(hiScore);
+            }
+            loadStorage();
+
+            function saveSettings() {
+                window.localStorage.setItem("set-touch-kbd", hideTouchKeyboard ? "true" : "false");
+                window.localStorage.setItem("streak", streak);
+                if (hiScore != null) window.localStorage.setItem("hi-score", hiScore);
+            }
+
+            function saveRecords() {
+                window.localStorage.setItem("records", JSON.stringify(records));
+            }
+
+            function updateStreakDisplay() {
+                var playedDays = [ false, false, false, false, false ];
+                for (let i = 0; i < 5; i++) {
+                    let thisDay = new Date(today);
+                    thisDay.setDate(thisDay.getDate() - (4 - i));
+                    streakDates[i].innerHTML = thisDay.getDate();
+                    let thisDayKey = thisDay.getFullYear() + "/" + thisDay.getMonth() + "/" + thisDay.getDate();
+                    if (thisDayKey in records) {
+                        streakStamps[i].innerHTML = "✅";
+                        playedDays[i] = true;
+                    } else {
+                        if (i == 4) streakStamps[i].innerHTML = "👀";
+                        else streakStamps[i].innerHTML = "❌";
+                        playedDays[i] = false;
+                    }
+                }
+                if (playedDays[3] == false && playedDays[4] == false) {
+                    streak = 0;
+                    saveSettings();
+                }
+                if (hiScore == null) moreRecords.innerHTML = "연속 기록: " + streak + "│최단 시간: 없음";
+                else moreRecords.innerHTML = "연속 기록: " + streak + "│최단 시간: " + (hiScore / 1000).toFixed(2) + "초";
+            }
+            updateStreakDisplay();
+
+            function doToggleHidTouchKbd() {
+                hideTouchKeyboard = !hideTouchKeyboard;
+                checkEnableTouchKbd.innerText = hideTouchKeyboard ? "⬜" : "☑️";
+                if (hideTouchKeyboard) {
+                    keypad.classList.add("collapse");
+                    infoKeyboardControls.classList.remove("collapse");
+                } else {
+                    keypad.classList.remove("collapse");
+                    infoKeyboardControls.classList.add("collapse");
+                }
+                saveSettings();
+            }
+
+            toggleHideTouchKbd.addEventListener("click", (ev) => { doToggleHidTouchKbd(); });
+            toggleHideTouchKbd.addEventListener("keypress", (ev) => { if (ev.key == "Enter" || ev.key == " ") doToggleHidTouchKbd(); });
+
+            let shouldHandleInput = false;
+            let practiceGame = false;
+            let countdownCount = 3;
+            let problems = [];
+            let answerText = "";
+            let startTime = Date.now();
+
+            function doStartPractice() {
+                practiceGame = true;
+                generateProblems(10);
+                beginCountdown();
+            }
+
+            btnStartPractice.addEventListener("click", (ev) => { doStartPractice(); });
+            btnStartPractice.addEventListener("keypress", (ev) => { if (ev.key == "Enter" || ev.key == " ") doStartPractice(); });
+
+            function doStartGame() {
+                let todayKey = today.getFullYear() + "/" + today.getMonth() + "/" + today.getDate();
+                if (todayKey in records) {
+                    if (confirm("오늘은 이미 도전을 완료했습니다.\n한 번 더 도전하시겠습니까?\n(기록이 저장되지 않습니다)")) {
+                        practiceGame = false;
+                        generateProblems(30);
+                        beginCountdown();
+                    }
+                } else {
+                    practiceGame = false;
+                    generateProblems(30);
+                    beginCountdown();
+                }
+            }
+
+            btnStartGame.addEventListener("click", (ev) => { doStartGame(); });
+            btnStartGame.addEventListener("keypress", (ev) => { if (ev.key == "Enter" || ev.key == " ") doStartGame(); });
+
+            function doResetRecords() {
+                if (confirm("모든 설정과 기록이 초기화됩니다.\n정말 계속하시겠습니까?")) {
+                    window.localStorage.removeItem("hi-score");
+                    window.localStorage.removeItem("records");
+                    window.localStorage.removeItem("set-touch-kbd");
+                    window.localStorage.removeItem("streak");
+                    window.location.reload();
+                }
+            }
+
+            btnResetRecords.addEventListener("click", (ev) => { doResetRecords(); });
+            btnResetRecords.addEventListener("keypress", (ev) => { if (ev.key == "Enter" || ev.key == " ") doResetRecords(); });
+
+            function generateProblems(count) {
+                problems = [];
+                for (let i = 0; i < count; i++) {
+                    problems.push(generateProblem());
+                }
+                updateProblemDisplay();
+            }
+
+            function randomInt(ceil) {
+                return Math.floor(Math.random() * ceil);
+            }
+
+            let lastProblem = [ 0, "", 0, "0" ];
+
+            function generateProblem() {
+                let problemType = randomInt(2);
+                if (problemType == 0) {
+                    // addition
+                    let answer = randomInt(11) + 3; // 3 ~ 13
+                    let lval = randomInt(answer - 1) + 1 // 1 ~ answer
+                    let rval = answer - lval;
+                    if (lval < rval) { let tmp = lval; lval = rval; rval = tmp; }
+                    if (rval >= 10) rval = 9;
+                    //console.log(lval + "+" + rval + "=" + answer);
+                    if (lastProblem[0] == lval && lastProblem[1] == "＋" && lastProblem[2] == rval && lastProblem[3] == answer.toString()) {
+                        lastProblem = [ 0, "", 0, "0" ];
+                        return generateProblem();
+                    } else {
+                        lastProblem = [ lval, "＋", rval, answer.toString() ];
+                        return [ lval, "＋", rval, answer.toString() ];
+                    }
+                } else if (problemType == 1) {
+                    // subtraction
+                    let lval = randomInt(12) + 2; // 2 ~ 13
+                    let rval = randomInt(lval - 1) + 1 // 1 ~ answer
+                    let answer = lval - rval;
+                    //console.log(lval + "-" + rval + "=" + answer);
+                    if (lastProblem[0] == lval && lastProblem[1] == "－" && lastProblem[2] == rval && lastProblem[3] == answer.toString()) {
+                        lastProblem = [ 0, "", 0, "0" ];
+                        return generateProblem();
+                    } else {
+                        lastProblem = [ lval, "－", rval, answer.toString() ]
+                        return [ lval, "－", rval, answer.toString() ];
+                    }
+                } else {
+                    return [ 16384, "＋", 16384, "32768" ];
+                }
+            }
+
+            function updateProblemDisplay() {
+                if (problems.length > 0) problemContents[0].innerHTML = problems[0][0] + " " + problems[0][1] + " " + problems[0][2] + " =";
+                else problemContents[0].innerHTML = "&nbsp;";
+                if (problems.length > 1) problemContents[1].innerHTML = problems[1][0] + " " + problems[1][1] + " " + problems[1][2] + " =";
+                else problemContents[1].innerHTML = "&nbsp;";
+                if (problems.length > 2) problemContents[2].innerHTML = problems[2][0] + " " + problems[2][1] + " " + problems[2][2] + " =";
+                else problemContents[2].innerHTML = "&nbsp;";
+            }
+
+            let activeCountCountdown = -1;
+
+            function beginCountdown() {
+                screenMenu.classList.add("hidden");
+                screenCountdown.classList.remove("hidden");
+                countdownCount = 3;
+                dCountdown.innerHTML = "3";
+                activeCountCountdown = setTimeout(countCountdown, 500);
+            }
+
+            function countCountdown() {
+                countdownCount = countdownCount - 1;
+                if (countdownCount == 0) {
+                    shouldHandleInput = true;
+                    startTime = Date.now();
+                    answerText = "";
+                    updateAnswerDisplay();
+                    screenCountdown.classList.add("hidden");
+                    screenGame.classList.remove("hidden");
+                    activeCountCountdown = -1;
+                } else {
+                    dCountdown.innerHTML = countdownCount+"";
+                    activeCountCountdown = setTimeout(countCountdown, 500);
+                }
+            }
+
+            function updateAnswerDisplay() {
+                if (answerText.length == 0) inputBox.innerHTML = "　"
+                else inputBox.innerHTML = answerText;
+            }
+
+            keys[0] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("1"); });
+            keys[1] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("2"); });
+            keys[2] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("3"); });
+            keys[3] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("4"); });
+            keys[4] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("5"); });
+            keys[5] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("6"); });
+            keys[6] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("7"); });
+            keys[7] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("8"); });
+            keys[8] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("9"); });
+            keys[9] .addEventListener("click", (ev) => { if (!shouldHandleInput) return; clearInput(); });
+            keys[10].addEventListener("click", (ev) => { if (!shouldHandleInput) return; appendInput("0"); });
+            keys[11].addEventListener("click", (ev) => { if (!shouldHandleInput) return; checkAnswer(); });
+
+            function appendInput(which) {
+                if (answerText.length > 2) return;
+                if (which == "0") {
+                    if (answerText.length > 0 && answerText.charAt(answerText.length) != "0") answerText = answerText + "0";
+                    updateAnswerDisplay();
+                } else {
+                    answerText = answerText + which;
+                    updateAnswerDisplay();
+                }
+            }
+
+            function clearInput() {
+                answerText = "";
+                updateAnswerDisplay();
+            }
+
+            function deleteInput() {
+                if (answerText.length > 0) answerText = answerText.substring(0, answerText.length - 1);
+                updateAnswerDisplay();
+            }
+
+            function checkAnswer() {
+                if (answerText == problems[0][3]) {
+                    answerText = "";
+                    problems.shift();
+                    if (problems.length > 0) {
+                        updateProblemDisplay();
+                        updateAnswerDisplay();
+                        inputBox.classList.remove("anim-ding");
+                        inputBox.classList.remove("anim-beep");
+                        problemContents[0].classList.remove("anim-problem-slide");
+                        problemContents[1].classList.remove("anim-problem-slide");
+                        problemContents[2].classList.remove("anim-problem-slide");
+                        problemContents[0].offsetWidth;
+                        inputBox.classList.add("anim-ding");
+                        problemContents[0].classList.add("anim-problem-slide");
+                        problemContents[1].classList.add("anim-problem-slide");
+                        problemContents[2].classList.add("anim-problem-slide");
+                    } else {
+                        goResult();
+                    }
+                } else {
+                    answerText = "";
+                    updateAnswerDisplay();
+                    inputBox.classList.remove("anim-ding");
+                    inputBox.classList.remove("anim-beep");
+                    inputBox.offsetWidth;
+                    inputBox.classList.add("anim-beep");
+                }
+            }
+            
+            document.addEventListener("keydown", (ev) => {
+                if (ev.key == "c") {
+                    confetti({
+                        particleCount: 100,
+                        spread: 90,
+                        origin: { y: 0.7 },
+                        disableForReducedMotion: true,
+                    });
+                    return;
+                }
+                if (!shouldHandleInput) return;
+                     if (ev.key == "1") { appendInput("1"); return; }
+                else if (ev.key == "2") { appendInput("2"); return; }
+                else if (ev.key == "3") { appendInput("3"); return; }
+                else if (ev.key == "4") { appendInput("4"); return; }
+                else if (ev.key == "5") { appendInput("5"); return; }
+                else if (ev.key == "6") { appendInput("6"); return; }
+                else if (ev.key == "7") { appendInput("7"); return; }
+                else if (ev.key == "8") { appendInput("8"); return; }
+                else if (ev.key == "9") { appendInput("9"); return; }
+                else if (ev.key == "0") { appendInput("0"); return; }
+                else if (ev.key == "Backspace") { deleteInput(); return; }
+                else if (ev.key == "Delete") { clearInput(); return; }
+                else if (ev.key == "Enter") { checkAnswer(); return; }
+            });
+
+            function goResult() {
+                shouldHandleInput = false;
+                let elapsedTime = Date.now() - startTime;
+                if (practiceGame) {
+                    resultResultIs.innerHTML = "걸린 시간:";
+                } else {
+                    let targetDay = new Date(today);
+                    let targetDayKey = targetDay.getFullYear() + "/" + targetDay.getMonth() + "/" + targetDay.getDate();
+                    if (!(targetDayKey in records)) {
+                        records[targetDayKey] = elapsedTime;
+                        saveRecords();
+                        if (hiScore == null || hiScore > elapsedTime) {
+                            resultResultIs.innerHTML = "최단 시간 달성!";
+                            streak = streak + 1;
+                            hiScore = elapsedTime;
+                            saveSettings();
+                        } else {
+                            resultResultIs.innerHTML = "오늘의 기록:";
+                        }
+                        updateStreakDisplay();
+                    } else {
+                        resultResultIs.innerHTML = "걸린 시간:";
+                    }
+                }
+                resultElapsed.innerHTML = (elapsedTime / 1000).toFixed(2) + "초";
+                screenGame.classList.add("hidden");
+                screenResult.classList.remove("hidden");
+                confetti({
+                    particleCount: 100,
+                    spread: 90,
+                    origin: { y: 0.7 },
+                    disableForReducedMotion: true,
+                });
+            }
+
+            function doReturnToTitle() {
+                screenResult.classList.add("hidden");
+                screenMenu.classList.remove("hidden");
+            }
+
+            btnReturnToTitle.addEventListener("click", (ev) => { doReturnToTitle(); });
+            btnReturnToTitle.addEventListener("keypress", (ev) => { if (ev.key == "Enter" || ev.key == " ") doReturnToTitle(); });
+
+            function emergencyReset() {
+                screenCountdown.classList.add("hidden");
+                screenGame.classList.add("hidden");
+                screenResult.classList.add("hidden");
+                screenMenu.classList.remove("hidden");
+                shouldHandleInput = false;
+                loadStorage();
+                updateStreakDisplay();
+                if (activeCountCountdown != -1) clearTimeout(activeCountCountdown);
+            }
+
+            // reset on back/forward
+            window.addEventListener("popstate", emergencyReset);
+            window.addEventListener("pageshow", (e) => { if (e.persisted) emergencyReset(); });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+    </body>
+</html>
