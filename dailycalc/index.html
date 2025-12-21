@@ -740,15 +740,15 @@
                     let targetDayKey = targetDay.getFullYear() + "/" + targetDay.getMonth() + "/" + targetDay.getDate();
                     if (!(targetDayKey in records)) {
                         records[targetDayKey] = elapsedTime;
+                        streak = streak + 1;
                         saveRecords();
                         if (hiScore == null || hiScore > elapsedTime) {
                             resultResultIs.innerHTML = "최단 시간 달성!";
-                            streak = streak + 1;
                             hiScore = elapsedTime;
-                            saveSettings();
                         } else {
                             resultResultIs.innerHTML = "오늘의 기록:";
                         }
+                        saveSettings();
                         updateStreakDisplay();
                     } else {
                         resultResultIs.innerHTML = "걸린 시간:";
