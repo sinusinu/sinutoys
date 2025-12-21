@@ -444,7 +444,7 @@
             loadStorage();
 
             function saveSettings() {
-                window.localStorage.setItem("set-touch-kbd", hideTouchKeyboard ? "true" : "false");
+                window.localStorage.setItem("hide-touch-kbd", hideTouchKeyboard ? "true" : "false");
                 window.localStorage.setItem("streak", streak);
                 if (hiScore != null) window.localStorage.setItem("hi-score", hiScore);
             }
@@ -533,6 +533,7 @@
                     window.localStorage.removeItem("hi-score");
                     window.localStorage.removeItem("records");
                     window.localStorage.removeItem("set-touch-kbd");
+                    window.localStorage.removeItem("hide-touch-kbd");
                     window.localStorage.removeItem("streak");
                     window.location.reload();
                 }
