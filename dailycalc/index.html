@@ -600,14 +600,14 @@
                 else problemContents[2].innerHTML = "&nbsp;";
             }
 
-            let activeCountCountdown = -1;
+            let activeTimeoutFunc = -1;
 
             function beginCountdown() {
                 screenMenu.classList.add("hidden");
                 screenCountdown.classList.remove("hidden");
                 countdownCount = 4;
                 dCountdown.innerHTML = "3";
-                activeCountCountdown = setTimeout(countCountdown, 500);
+                activeTimeoutFunc = setTimeout(countCountdown, 500);
             }
 
             function countCountdown() {
@@ -619,13 +619,13 @@
                     updateAnswerDisplay();
                     screenCountdown.classList.add("hidden");
                     screenGame.classList.remove("hidden");
-                    activeCountCountdown = -1;
+                    activeTimeoutFunc = -1;
                 } else if (countdownCount == 1) {
                     dCountdown.innerHTML = "";
-                    activeCountCountdown = setTimeout(countCountdown, 500);
+                    activeTimeoutFunc = setTimeout(countCountdown, 500);
                 } else {
                     dCountdown.innerHTML = (countdownCount - 1);
-                    activeCountCountdown = setTimeout(countCountdown, 500);
+                    activeTimeoutFunc = setTimeout(countCountdown, 500);
                 }
             }
 
@@ -755,6 +755,7 @@
                     }
                 }
                 resultElapsed.innerHTML = (elapsedTime / 1000).toFixed(2) + "초";
+                btnReturnToTitle.classList.add("hidden");
                 screenGame.classList.add("hidden");
                 screenResult.classList.remove("hidden");
                 confetti({
@@ -763,6 +764,10 @@
                     origin: { y: 0.7 },
                     disableForReducedMotion: true,
                 });
+                activeTimeoutFunc = setTimeout(() => {
+                    btnReturnToTitle.classList.remove("hidden");
+                    activeTimeoutFunc = -1;
+                }, 2000);
             }
 
             function doReturnToTitle() {
@@ -781,7 +786,7 @@
                 shouldHandleInput = false;
                 loadStorage();
                 updateStreakDisplay();
-                if (activeCountCountdown != -1) clearTimeout(activeCountCountdown);
+                if (activeTimeoutFunc != -1) clearTimeout(activeTimeoutFunc);
             }
 
             // reset on back/forward
