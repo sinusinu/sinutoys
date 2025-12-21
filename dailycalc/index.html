@@ -191,12 +191,26 @@
                 width: 1px;
                 height: 100px;
             }
-            .game-inputbox {
+            .game-inputbox-container {
                 background-color: var(--fg-farfar);
                 font-size: 44px;
-                padding: 0px 12px 2px 12px;
+                padding-bottom: 2px;
                 margin-bottom: 8px;
-                min-width: 100px;
+                width: 144px;
+                position: relative;
+                text-align: center;
+            }
+            .game-inputbox {
+                position: absolute;
+                width: 144px;
+                top: 0;
+                left: 0;
+            }
+            .game-inputbox-overlay {
+                position: absolute;
+                width: 144px;
+                top: 0;
+                left: 0;
             }
             .game-keys-container {
                 font-size: 32px;
@@ -226,9 +240,9 @@
                 background-color: var(--btn-hover-bg);
             }
             .anim-problem-slide {
-                animation: problemSlide 0.2s cubic-bezier(.15,.58,.36,.91) forwards;
+                animation: problem-slide 0.2s cubic-bezier(.15,.58,.36,.91) forwards;
             }
-            @keyframes problemSlide {
+            @keyframes problem-slide {
                 0% {
                     translate: 0px -90px;
                 }
@@ -256,6 +270,19 @@
                 }
                 100% {
                     background-color: var(--fg-farfar);
+                }
+            }
+            .anim-correct-answer {
+                animation: correct-answer 0.5s cubic-bezier(.15,.58,.36,.91) forwards;
+            }
+            @keyframes correct-answer {
+                0% {
+                    translate: 0px 0px;
+                    opacity: 100%;
+                }
+                100% {
+                    translate: 0px -45px;
+                    opacity: 0%;
                 }
             }
         </style>
@@ -313,7 +340,10 @@
                         <div class="game-problem game-problem-current"><div id="game-problem-current" class="game-problem-content">32 × 2 =</div></div>
                     </div>
                     <div class="game-spacer"></div>
-                    <div id="game-inputbox" class="game-inputbox">&nbsp;</div>
+                    <div id="game-inputbox-container" class="game-inputbox-container">&nbsp;
+                        <div id="game-inputbox" class="game-inputbox"></div>
+                        <div id="game-inputbox-overlay" class="game-inputbox-overlay"></div>
+                    </div>
                     <div id="game-keys-container" class="game-keys-container">
                         <div class="game-keys-row">
                             <div class="game-key">1</div>
@@ -331,9 +361,9 @@
                             <div class="game-key">9</div>
                         </div>
                         <div class="game-keys-row">
-                            <div class="game-key game-key-text">지우기</div>
+                            <div class="game-key game-key-text hidden"></div>
                             <div class="game-key">0</div>
-                            <div class="game-key game-key-text">확인</div>
+                            <div class="game-key game-key-text">지우기</div>
                         </div>
                     </div>
                 </div>
@@ -378,7 +408,9 @@
                 document.getElementById("game-problem-far"),
                 document.getElementById("game-problem-farfar"),
             ];
+            let inputBoxContainer = document.getElementById("game-inputbox-container");
             let inputBox = document.getElementById("game-inputbox");
+            let inputBoxOverlay = document.getElementById("game-inputbox-overlay");
             let keypad = document.getElementById("game-keys-container");
             let keys = document.getElementsByClassName("game-key");
             let infoKeyboardControls = document.getElementById("info-keyboard-controls");
@@ -611,18 +643,20 @@
             keys[6] .addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; appendInput("7"); });
             keys[7] .addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; appendInput("8"); });
             keys[8] .addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; appendInput("9"); });
-            keys[9] .addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; clearInput(); });
+            //keys[9] .addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; clearInput(); });
             keys[10].addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; appendInput("0"); });
-            keys[11].addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; checkAnswer(); });
+            keys[11].addEventListener("pointerdown", (ev) => { if (!shouldHandleInput) return; clearInput(); });
 
             function appendInput(which) {
                 if (answerText.length > 2) return;
                 if (which == "0") {
                     if (answerText.length > 0 && answerText.charAt(answerText.length) != "0") answerText = answerText + "0";
                     updateAnswerDisplay();
+                    checkAnswer();
                 } else {
                     answerText = answerText + which;
                     updateAnswerDisplay();
+                    checkAnswer();
                 }
             }
 
@@ -638,32 +672,36 @@
 
             function checkAnswer() {
                 if (answerText == problems[0][3]) {
+                    inputBoxOverlay.innerHTML = answerText;
                     answerText = "";
                     problems.shift();
                     if (problems.length > 0) {
                         updateProblemDisplay();
                         updateAnswerDisplay();
-                        inputBox.classList.remove("anim-ding");
-                        inputBox.classList.remove("anim-beep");
+                        inputBoxContainer.classList.remove("anim-ding");
+                        inputBoxContainer.classList.remove("anim-beep");
+                        inputBoxOverlay.classList.remove("anim-correct-answer");
                         problemContents[0].classList.remove("anim-problem-slide");
                         problemContents[1].classList.remove("anim-problem-slide");
                         problemContents[2].classList.remove("anim-problem-slide");
                         problemContents[0].offsetWidth;
-                        inputBox.classList.add("anim-ding");
+                        inputBoxContainer.classList.add("anim-ding");
+                        inputBoxOverlay.classList.add("anim-correct-answer");
                         problemContents[0].classList.add("anim-problem-slide");
                         problemContents[1].classList.add("anim-problem-slide");
                         problemContents[2].classList.add("anim-problem-slide");
                     } else {
+                        inputBoxOverlay.innerHTML = "";
                         goResult();
                     }
-                } else {
-                    answerText = "";
-                    updateAnswerDisplay();
-                    inputBox.classList.remove("anim-ding");
-                    inputBox.classList.remove("anim-beep");
-                    inputBox.offsetWidth;
-                    inputBox.classList.add("anim-beep");
-                }
+                }// else {
+                    // answerText = "";
+                    // updateAnswerDisplay();
+                    // inputBox.classList.remove("anim-ding");
+                    // inputBox.classList.remove("anim-beep");
+                    // inputBox.offsetWidth;
+                    // inputBox.classList.add("anim-beep");
+                // }
             }
             
             document.addEventListener("keydown", (ev) => {
