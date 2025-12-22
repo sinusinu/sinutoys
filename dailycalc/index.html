@@ -437,7 +437,7 @@
                 records = JSON.parse(window.localStorage.getItem("records"));
                 if (records == null) records = {};
                 streak = window.localStorage.getItem("streak");
-                if (streak == null) streak = 0;
+                if (streak == null) streak = "0";
                 hiScore = window.localStorage.getItem("hi-score");
                 if (hiScore != null) hiScore = parseFloat(hiScore);
             }
@@ -470,7 +470,7 @@
                     }
                 }
                 if (playedDays[3] == false && playedDays[4] == false) {
-                    streak = 0;
+                    streak = "0";
                     saveSettings();
                 }
                 if (hiScore == null) moreRecords.innerHTML = streak + "일 연속│최단 기록: 없음";
