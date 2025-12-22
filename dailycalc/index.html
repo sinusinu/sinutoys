@@ -434,10 +434,10 @@
                     window.localStorage.removeItem("records");
                     window.localStorage.removeItem("hide-touch-kbd");
                     window.localStorage.removeItem("streak");
-                    window.localStorage.setItem("dailycalc.hi-score", h);
-                    window.localStorage.setItem("dailycalc.records", r);
-                    window.localStorage.setItem("dailycalc.hide-touch-kbd", k);
-                    window.localStorage.setItem("dailycalc.streak", s);
+                    if (h != null) window.localStorage.setItem("dailycalc.hi-score", h);
+                    if (r != null) window.localStorage.setItem("dailycalc.records", r);
+                    if (k != null) window.localStorage.setItem("dailycalc.hide-touch-kbd", k);
+                    if (s != null) window.localStorage.setItem("dailycalc.streak", s);
                 }
                 hideTouchKeyboard = (window.localStorage.getItem("dailycalc.hide-touch-kbd") == "true");
                 checkEnableTouchKbd.innerText = hideTouchKeyboard ? "⬜" : "☑️";
