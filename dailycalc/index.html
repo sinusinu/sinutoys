@@ -740,7 +740,7 @@
                     let targetDayKey = targetDay.getFullYear() + "/" + targetDay.getMonth() + "/" + targetDay.getDate();
                     if (!(targetDayKey in records)) {
                         records[targetDayKey] = elapsedTime;
-                        streak = streak + 1;
+                        streak = (parseInt(streak) + 1).toString();
                         saveRecords();
                         if (hiScore == null || hiScore > elapsedTime) {
                             resultResultIs.innerHTML = "최단 기록 달성!";
