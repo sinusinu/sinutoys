@@ -473,8 +473,8 @@
                     streak = 0;
                     saveSettings();
                 }
-                if (hiScore == null) moreRecords.innerHTML = "연속 기록: " + streak + "│최단 시간: 없음";
-                else moreRecords.innerHTML = "연속 기록: " + streak + "│최단 시간: " + (hiScore / 1000).toFixed(2) + "초";
+                if (hiScore == null) moreRecords.innerHTML = streak + "일 연속│최단 기록: 없음";
+                else moreRecords.innerHTML = streak + "일 연속│최단 기록: " + (hiScore / 1000).toFixed(2) + "초";
             }
             updateStreakDisplay();
 
@@ -743,7 +743,7 @@
                         streak = streak + 1;
                         saveRecords();
                         if (hiScore == null || hiScore > elapsedTime) {
-                            resultResultIs.innerHTML = "최단 시간 달성!";
+                            resultResultIs.innerHTML = "최단 기록 달성!";
                             hiScore = elapsedTime;
                         } else {
                             resultResultIs.innerHTML = "오늘의 기록:";
