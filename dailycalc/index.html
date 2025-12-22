@@ -425,7 +425,21 @@
             let hideTouchKeyboard = false;
 
             function loadStorage() {
-                hideTouchKeyboard = (window.localStorage.getItem("hide-touch-kbd") == "true");
+                if (window.localStorage.getItem("streak") != null) {
+                    let h = window.localStorage.getItem("hi-score");
+                    let r = window.localStorage.getItem("records");
+                    let k = window.localStorage.getItem("hide-touch-kbd");
+                    let s = window.localStorage.getItem("streak");
+                    window.localStorage.removeItem("hi-score");
+                    window.localStorage.removeItem("records");
+                    window.localStorage.removeItem("hide-touch-kbd");
+                    window.localStorage.removeItem("streak");
+                    window.localStorage.setItem("dailycalc.hi-score", h);
+                    window.localStorage.setItem("dailycalc.records", r);
+                    window.localStorage.setItem("dailycalc.hide-touch-kbd", k);
+                    window.localStorage.setItem("dailycalc.streak", s);
+                }
+                hideTouchKeyboard = (window.localStorage.getItem("dailycalc.hide-touch-kbd") == "true");
                 checkEnableTouchKbd.innerText = hideTouchKeyboard ? "⬜" : "☑️";
                 if (hideTouchKeyboard) {
                     keypad.classList.add("collapse");
@@ -434,23 +448,23 @@
                     keypad.classList.remove("collapse");
                     infoKeyboardControls.classList.add("collapse");
                 }
-                records = JSON.parse(window.localStorage.getItem("records"));
+                records = JSON.parse(window.localStorage.getItem("dailycalc.records"));
                 if (records == null) records = {};
-                streak = window.localStorage.getItem("streak");
+                streak = window.localStorage.getItem("dailycalc.streak");
                 if (streak == null) streak = "0";
-                hiScore = window.localStorage.getItem("hi-score");
+                hiScore = window.localStorage.getItem("dailycalc.hi-score");
                 if (hiScore != null) hiScore = parseFloat(hiScore);
             }
             loadStorage();
 
             function saveSettings() {
-                window.localStorage.setItem("hide-touch-kbd", hideTouchKeyboard ? "true" : "false");
-                window.localStorage.setItem("streak", streak);
-                if (hiScore != null) window.localStorage.setItem("hi-score", hiScore);
+                window.localStorage.setItem("dailycalc.hide-touch-kbd", hideTouchKeyboard ? "true" : "false");
+                window.localStorage.setItem("dailycalc.streak", streak);
+                if (hiScore != null) window.localStorage.setItem("dailycalc.hi-score", hiScore);
             }
 
             function saveRecords() {
-                window.localStorage.setItem("records", JSON.stringify(records));
+                window.localStorage.setItem("dailycalc.records", JSON.stringify(records));
             }
 
             function updateStreakDisplay() {
@@ -535,6 +549,10 @@
                     window.localStorage.removeItem("set-touch-kbd");
                     window.localStorage.removeItem("hide-touch-kbd");
                     window.localStorage.removeItem("streak");
+                    window.localStorage.removeItem("dailycalc.hi-score");
+                    window.localStorage.removeItem("dailycalc.records");
+                    window.localStorage.removeItem("dailycalc.hide-touch-kbd");
+                    window.localStorage.removeItem("dailycalc.streak");
                     window.location.reload();
                 }
             }
