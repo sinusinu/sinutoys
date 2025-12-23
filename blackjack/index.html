@@ -568,7 +568,7 @@
                     return;
                 }
 
-                if (handDealer[0][0] == 1 && handDealer[0][1] == 1) {
+                if (handDealer[0][1] == 1) {
                     if (credit > Math.floor(bet / 2)) {
                         // ask insurance
                         setOverlayMessage("인슈어런스? (" + Math.floor(bet / 2) + ")");
