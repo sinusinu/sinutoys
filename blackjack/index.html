@@ -633,7 +633,7 @@
                 for (let i = 0; i < handPlayer.length; i++) handPlayer[i][2] = true;
                 updateHandDisplay(false, true);
 
-                await delay(beegEventInterval);
+                await delay(drawSlowInterval);
 
                 setOverlayMessage(null);
                 dealerOpen();
@@ -673,7 +673,7 @@
                 for (let i = 0; i < handDealer.length; i++) handDealer[i][2] = true;
                 updateHandDisplay(true, false);
                 
-                await delay(beegEventInterval);
+                await delay(drawSlowInterval);
 
                 if (calculateHandScore(handPlayer) > 21) {
                     // player also busted, no return
