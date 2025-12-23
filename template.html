@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>새로운 장난감 :: 시누의 장난감 상자</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../common-topbar.css">
+        <style>
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #1d1d20;
+                    --fg: #f0f0f0;
+                }
+            }
+            @media (prefers-color-scheme: light) {
+                :root {
+                    --bg: #f0f0f0;
+                    --fg: #101010;
+                }
+            }
+            body, html {
+                background-color: var(--bg);
+                overflow-y: hidden;
+                color: var(--fg);
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+            .container {
+                height: 100dvh;
+                display: flex;
+                flex-direction: column;
+            }
+            .screen-container {
+                position: relative;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                user-select: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="stb-topbar">
+                <div class="stb-topbar-back"><a href="../">◀ 돌아가기</a></div>
+                <div class="stb-topbar-title">새로운 장난감</div>
+            </div>
+            <div class="screen-container">
+                Hello world!
+            </div>
+        </div>
+    </body>
+</html>
