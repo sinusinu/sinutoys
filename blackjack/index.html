@@ -742,10 +742,10 @@
 
                 let currentPlayerHandScore = calculateHandScore(handPlayer);
                 if (currentPlayerHandScore == 21) {
-                    await delay(beegEventInterval);
+                    await delay(drawSlowInterval);
                     playerBlackjack();
                 } else if (currentPlayerHandScore > 21) {
-                    await delay(beegEventInterval);
+                    await delay(drawSlowInterval);
                     playerBust();
                 } else {
                     await delay(drawSlowInterval);
