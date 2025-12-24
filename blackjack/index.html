@@ -50,6 +50,23 @@
                     --overlay-fg: #000000;
                 }
             }
+            @media (hover: hover) {
+                .option-adjust-button:hover {
+                    background-color: var(--fg);
+                    color: var(--bg);
+                    text-shadow: none !important;
+                }
+                .button:hover {
+                    background-color: var(--fg);
+                    color: var(--bg);
+                    text-shadow: none !important;
+                }
+                .game-control-padded-button:hover {
+                    background-color: var(--fg);
+                    color: var(--bg);
+                    text-shadow: none !important;
+                }
+            }
             :root {
                 --card-bg: #f0f0f0;
                 --card-fg: #101010;
@@ -200,11 +217,6 @@
                 border-radius: 8px;
                 cursor: pointer;
             }
-            .option-adjust-button:hover {
-                background-color: var(--fg);
-                color: var(--bg);
-                text-shadow: none !important;
-            }
             .clickable-label {
                 cursor: pointer;
             }
@@ -221,11 +233,6 @@
                 cursor: pointer;
                 padding-bottom: 2px;
                 text-shadow: 2px 2px 1px var(--fg-shadow);
-            }
-            .button:hover {
-                background-color: var(--fg);
-                color: var(--bg);
-                text-shadow: none !important;
             }
             .game-info {
                 font-family: 'D2Coding', monospace;
@@ -288,11 +295,6 @@
                 border: 2px solid var(--fg);
                 border-radius: 8px;
                 cursor: pointer;
-            }
-            .game-control-padded-button:hover {
-                background-color: var(--fg);
-                color: var(--bg);
-                text-shadow: none !important;
             }
             .hspacer {
                 width: 20px;

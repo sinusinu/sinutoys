@@ -33,6 +33,17 @@
                     --beep: #FF8080;
                 }
             }
+            @media (hover: hover) {
+                .menu-bigbutton:hover {
+                    animation: bigbutton-hover-anim 0.03s linear forwards;
+                }
+                .menu-bigbutton-caution:hover {
+                    animation: bigbutton-caution-hover-anim 0.03s linear forwards;
+                }
+                .game-key:hover {
+                    background-color: var(--btn-hover-bg);
+                }
+            }
             body, html {
                 background-color: var(--bg);
                 overflow-y: hidden;
@@ -98,9 +109,6 @@
             .menu-bigbutton-caution {
                 border: 1px solid var(--beep);
             }
-            .menu-bigbutton:hover {
-                animation: bigbutton-hover-anim 0.03s linear forwards;
-            }
             @keyframes bigbutton-hover-anim {
                 0% {
                     background-color: var(--bg);
@@ -108,9 +116,6 @@
                 100% {
                     background-color: var(--btn-hover-bg);
                 }
-            }
-            .menu-bigbutton-caution:hover {
-                animation: bigbutton-caution-hover-anim 0.03s linear forwards;
             }
             @keyframes bigbutton-caution-hover-anim {
                 0% {
@@ -237,9 +242,6 @@
             }
             .game-key-text {
                 font-size: 24px;
-            }
-            .game-key:hover {
-                background-color: var(--btn-hover-bg);
             }
             .anim-problem-slide {
                 animation: problem-slide 0.2s cubic-bezier(.15,.58,.36,.91) forwards;
