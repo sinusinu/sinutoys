@@ -367,7 +367,7 @@
                     </div>
                     <div class="game-spacer"></div>
                     <div class="game-controls">
-                        <div id="hud-credits" class="game-control-hud">크레딧: 100│베팅: 0</div>
+                        <div id="hud-credits" class="game-control-hud">크레딧: 100│베팅: 0│0/0/0</div>
                         <div id="bidding-panel" class="game-control-panel">
                             <div id="bet-dec" class="game-control-padded-button">－</div>
                             <div class="hspacer"></div>
@@ -452,6 +452,28 @@
                 credit = parseInt(storedCredit);
                 startingCredit.innerHTML = credit;
             }
+            
+            let recordWin = 0;
+            let recordLose = 0;
+            let recordDraw = 0;
+
+            function loadRecords() {
+                var recordsRaw = window.localStorage.getItem("blackjack.records");
+                if (recordsRaw == null) { recordWin = 0; recordLose = 0; recordDraw = 0; return; }
+                var recordsSplit = recordsRaw.split(",");
+                if (recordsSplit.length != 3) { recordWin = 0; recordLose = 0; recordDraw = 0; return; }
+                recordWin = parseInt(recordsSplit[0]);
+                recordLose = parseInt(recordsSplit[1]);
+                recordDraw = parseInt(recordsSplit[2]);
+                if (isNaN(recordWin)) recordWin = 0;
+                if (isNaN(recordLose)) recordLose = 0;
+                if (isNaN(recordDraw)) recordDraw = 0;
+            }
+            loadRecords();
+
+            function saveRecords() {
+                window.localStorage.setItem("blackjack.records", recordWin + "," + recordLose + "," + recordDraw);
+            }
 
             startingCreditDec.addEventListener("click", (ev) => {
                 doStartingCreditDec();
@@ -494,7 +516,7 @@
             function doInitialzeGame() {
                 screenTitle.classList.add("hidden");
                 screenGame.classList.remove("hidden");
-                hudCredits.innerHTML = "크레딧: " + credit + "│베팅: 0";
+                updateCreditDisplay();
                 askBet();
             }
 
@@ -622,6 +644,8 @@
                     } else {
                         bet = 0;
                     }
+                    recordLose += 1;
+                    saveRecords();
                     updateCreditDisplay();
                     showControlPanel("nextgame");
                 } else {
@@ -644,6 +668,8 @@
 
                 credit += Math.floor(bet * 2.5);
                 bet = 0;
+                recordWin += 1;
+                saveRecords();
                 updateCreditDisplay();
                 showControlPanel("nextgame");
             }
@@ -703,10 +729,14 @@
                     // player also busted, no return
                     bet = 0;
                     setOverlayMessage(null);
+                    recordLose += 1;
+                    saveRecords();
                 } else {
                     credit += bet * 2;
                     bet = 0;
                     setOverlayMessage("승리!");
+                    recordWin += 1;
+                    saveRecords();
                 }
                 updateCreditDisplay();
                 showControlPanel("nextgame");
@@ -720,21 +750,29 @@
                     // dealer win - no return
                     bet = 0;
                     setOverlayMessage("딜러 승리!");
+                    recordLose += 1;
+                    saveRecords();
                 } else {
                     if (currentDealerHandScore == currentPlayerHandScore) {
                         // draw - return bet * 1
                         credit += bet;
                         bet = 0;
                         setOverlayMessage("무승부");
+                        recordDraw += 1;
+                        saveRecords();
                     } else if (currentDealerHandScore > currentPlayerHandScore) {
                         // dealer win - no return
                         bet = 0;
                         setOverlayMessage("딜러 승리!");
+                        recordLose += 1;
+                        saveRecords();
                     } else if (currentDealerHandScore < currentPlayerHandScore) {
                         // player win - return bet * 2
                         credit += bet * 2;
                         bet = 0;
                         setOverlayMessage("승리!");
+                        recordWin += 1;
+                        saveRecords();
                     }
                 }
                 updateCreditDisplay();
@@ -797,6 +835,7 @@
                 if (credit == 0) {
                     if (confirm("더 이상 크레딧이 없어요!\n처음부터 다시 시작할까요?")) {
                         window.localStorage.removeItem("blackjack.credit");
+                        window.localStorage.removeItem("blackjack.records");
                         window.location.reload();
                     }
                 } else {
@@ -854,7 +893,7 @@
 
             function updateCreditDisplay() {
                 saveCredit();
-                hudCredits.innerHTML = "크레딧: " + credit + "│베팅: " + bet;
+                hudCredits.innerHTML = "크레딧: " + credit + "│베팅: " + bet + "│" + recordWin + "승 " + recordDraw + "무 " + recordLose + "패 ";
             }
 
             function calculateHandScore(hand) {
