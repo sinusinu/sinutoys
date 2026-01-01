@@ -461,6 +461,34 @@
 
             let keyInputTarget = "title";
 
+            const inputInitialInterval = 300;
+            const inputRepeatInterval = 75;
+            var repeatingFunction = () => {};
+            var repeatingFunctionIdx = -1;
+
+            function startRepeatingDo(func) {
+                func();
+                repeatingFunction = func;
+                repeatingFunctionIdx = setTimeout(repeatDo, inputInitialInterval);
+            }
+
+            function repeatDo() {
+                repeatingFunction();
+                repeatingFunctionIdx = setTimeout(repeatDo, inputRepeatInterval);
+            }
+
+            function stopRepeatingDo() {
+                if (repeatingFunctionIdx == -1) return;
+                repeatingFunction = () => {};
+                clearTimeout(repeatingFunctionIdx);
+            }
+
+            function setupElementAsTouchRepeatable(elem, func) {
+                elem.addEventListener("pointerdown", () => { startRepeatingDo(func); });
+                elem.addEventListener("pointerup", () => { stopRepeatingDo(); });
+                elem.addEventListener("pointerleave", () => { stopRepeatingDo(); });
+            }
+
             let storedCredit = window.localStorage.getItem("blackjack.credit");
             if (storedCredit != null && !isNaN(parseInt((storedCredit)))) {
                 if (storedCredit == 0) storedCredit = 100;
@@ -490,9 +518,7 @@
                 window.localStorage.setItem("blackjack.records", recordWin + "," + recordLose + "," + recordDraw);
             }
 
-            startingCreditDec.addEventListener("click", (ev) => {
-                doStartingCreditDec();
-            });
+            setupElementAsTouchRepeatable(startingCreditDec, doStartingCreditDec);
             startingCredit.addEventListener("click", (ev) => {
                 let customStartingCredit = prompt("새로운 시작 크레딧을 입력하세요", credit.toString());
                 try {
@@ -503,9 +529,7 @@
                     saveCredit();
                 } catch (_) {}
             });
-            startingCreditInc.addEventListener("click", (ev) => {
-                doStartingCreditInc();
-            });
+            setupElementAsTouchRepeatable(startingCreditInc, doStartingCreditInc);
 
             function doStartingCreditDec() {
                 credit = Math.max(10, credit - 10);
@@ -550,7 +574,7 @@
                 setOverlayMessage("베팅하세요...");
             }
 
-            betDec.addEventListener("pointerdown", () => { doBetDec(); });
+            setupElementAsTouchRepeatable(betDec, doBetDec);
             betAmount.addEventListener("click", () => {
                 let customBet = prompt("베팅할 크레딧을 입력하세요", bet.toString());
                 try {
@@ -560,7 +584,7 @@
                     betAmount.innerHTML = bet;
                 } catch (_) {}
             })
-            betInc.addEventListener("pointerdown", () => { doBetInc(); });
+            setupElementAsTouchRepeatable(betInc, doBetInc);
             betGo.addEventListener("click", () => { doBetGo(); });
 
             function doBetDec() {
