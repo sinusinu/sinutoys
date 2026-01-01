@@ -317,6 +317,21 @@
             .card-player-6 { transform: translateX(var(--player-hand-translatex-6)) translateY(var(--player-hand-translatey-6)) rotate(var(--player-hand-angle-6)); }
             .card-player-7 { transform: translateX(var(--player-hand-translatex-7)) translateY(var(--player-hand-translatey-7)) rotate(var(--player-hand-angle-7)); }
             .card-player-8 { transform: translateX(var(--player-hand-translatex-8)) translateY(var(--player-hand-translatey-8)) rotate(var(--player-hand-angle-8)); }
+            .anim-seesaw {
+                animation: seesaw 0.875s ease-in-out infinite;
+                transform-origin: 50% 90%;
+            }
+            @keyframes seesaw {
+                0% {
+                    transform: rotate(2deg);
+                }
+                50% {
+                    transform: rotate(-2deg);
+                }
+                100% {
+                    transform: rotate(2deg);
+                }
+            }
         </style>
     </head>
     <body>
@@ -329,7 +344,7 @@
                 <div id="screen-title" class="screen">
                     <div class="title">블랙잭</div>
                     <div class="title-spacer"></div>
-                    <div class="title-card-display">
+                    <div class="title-card-display anim-seesaw">
                         <div class="card card-back card-title"><img src="hmm.png" draggable="false"></div>
                         <div class="card card-black card-title"><div class="card-text">♠10</div></div>
                     </div>
